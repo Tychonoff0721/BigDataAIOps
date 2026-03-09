@@ -1,0 +1,118 @@
+spring:
+  application:
+    name: aiops-server
+  
+  # MySQL数据源配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/aiops?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 2509841336
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+  # SQL初始化
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+  
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  
+  # Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  
+  # Kafka配置（可选）
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: aiops-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    enabled: false
+
+# 服务配置
+server:
+  port: 8080
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.aiops.bigdata: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# AIOps业务配置
+aiops:
+  metrics:
+    retention-days: 30
+    max-cache-size: 10000
+  
+  analysis:
+    default-depth: normal
+    timeout-seconds: 60
+  
+  # LLM配置
+  llm:
+    # 当前使用的provider: openai, claude, local, mock
+    provider: mock
+    
+    # OpenAI配置
+    openai:
+      enabled: false
+      api-key: ${OPENAI_API_KEY:sk-xxx}
+      base-url: https://api.openai.com/v1
+      model: gpt-4
+      temperature: 0.7
+      max-tokens: 2000
+      timeout-seconds: 60
+    
+    # Claude配置
+    claude:
+      enabled: false
+      api-key: ${CLAUDE_API_KEY:sk-xxx}
+      base-url: https://api.anthropic.com/v1
+      model: claude-3-opus-20240229
+      max-tokens: 2000
+      timeout-seconds: 60
+    
+    # 本地模型配置
+    local:
+      enabled: false
+      base-url: http://localhost:8000/v1
+      model: local-model
+      api-key: ${LOCAL_LLM_API_KEY:}
+      timeout-seconds: 120
+    
+    # Mock配置（开发测试用）
+    mock:
+      enabled: true
+      simulate-delay: true
+      delay-ms: 500

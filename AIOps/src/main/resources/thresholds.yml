@@ -1,0 +1,197 @@
+# AIOps 阈值配置文件
+# 可根据实际集群情况动态调整
+
+# 组件健康检查阈值
+component:
+  # 内存使用率阈值
+  memory-usage:
+    warning: 0.80
+    critical: 0.90
+    description: "内存使用率"
+  
+  # CPU使用率阈值
+  cpu-usage:
+    warning: 0.80
+    critical: 0.90
+    description: "CPU使用率"
+  
+  # GC时间阈值（毫秒）
+  gc-time:
+    warning: 5000
+    critical: 10000
+    description: "GC停顿时间"
+  
+  # 磁盘使用率阈值
+  disk-usage:
+    warning: 0.80
+    critical: 0.90
+    description: "磁盘使用率"
+  
+  # 网络IO等待时间阈值（毫秒）
+  network-io-wait:
+    warning: 100
+    critical: 500
+    description: "网络IO等待时间"
+  
+  # 连接数阈值
+  connection-count:
+    warning: 800
+    critical: 950
+    description: "连接数"
+  
+  # 线程数阈值
+  thread-count:
+    warning: 800
+    critical: 950
+    description: "线程数"
+  
+  # 堆内存使用率阈值
+  heap-usage:
+    warning: 0.80
+    critical: 0.90
+    description: "堆内存使用率"
+
+# HDFS组件专用阈值
+hdfs:
+  namenode:
+    # NameNode堆内存使用率
+    heap-usage:
+      warning: 0.75
+      critical: 0.85
+    # 文件系统锁操作时长（毫秒）
+    fs-lock-time:
+      warning: 100
+      critical: 500
+    # 块池使用率
+    block-pool-usage:
+      warning: 0.80
+      critical: 0.90
+    # 滞后DataNode数量
+    stale-datanodes:
+      warning: 2
+      critical: 5
+    # 缺失块数量
+    missing-blocks:
+      warning: 1
+      critical: 10
+  
+  datanode:
+    # DataNode磁盘使用率
+    disk-usage:
+      warning: 0.85
+      critical: 0.95
+    # 卷失败数量
+    failed-volumes:
+      warning: 1
+      critical: 3
+
+# YARN组件专用阈值
+yarn:
+  resourcemanager:
+    # 集群内存使用率
+    cluster-memory-usage:
+      warning: 0.80
+      critical: 0.90
+    # 集群CPU使用率
+    cluster-cpu-usage:
+      warning: 0.80
+      critical: 0.90
+    # 待分配容器数
+    pending-containers:
+      warning: 100
+      critical: 500
+    # 应用队列长度
+    queue-length:
+      warning: 50
+      critical: 100
+  
+  nodemanager:
+    # 节点健康状态
+    unhealthy-nodes:
+      warning: 2
+      critical: 5
+    # 节点磁盘使用率
+    disk-usage:
+      warning: 0.85
+      critical: 0.95
+
+# Kafka组件专用阈值
+kafka:
+  broker:
+    # 分区数量
+    partition-count:
+      warning: 5000
+      critical: 10000
+    # 消息堆积量
+    log-size:
+      warning: 10737418240    # 10GB
+      critical: 53687091200   # 50GB
+    # 消费者滞后
+    consumer-lag:
+      warning: 10000
+      critical: 100000
+    # 离线分区数
+    offline-partitions:
+      warning: 0
+      critical: 1
+
+# Flink组件专用阈值
+flink:
+  jobmanager:
+    # 任务失败数
+    failed-jobs:
+      warning: 1
+      critical: 5
+    # 检查点失败数
+    failed-checkpoints:
+      warning: 3
+      critical: 10
+  
+  taskmanager:
+    # 任务重启动次数
+    restart-count:
+      warning: 3
+      critical: 10
+
+# Spark作业分析阈值
+spark-app:
+  # 数据倾斜比率（最大/中位任务时长）
+  skew-ratio:
+    warning: 3.0
+    critical: 10.0
+  
+  # Shuffle数据占比
+  shuffle-ratio:
+    warning: 0.5
+    critical: 0.8
+  
+  # 作业执行时长阈值（毫秒）
+  duration:
+    warning: 300000    # 5分钟
+    critical: 600000   # 10分钟
+  
+  # Stage GC时间占比
+  gc-ratio:
+    warning: 0.1
+    critical: 0.2
+  
+  # 失败任务数
+  failed-tasks:
+    warning: 1
+    critical: 5
+  
+  # Executor内存使用率
+  executor-memory-usage:
+    warning: 0.85
+    critical: 0.95
+
+# 时间序列特征提取配置
+time-series:
+  # 统计窗口大小
+  window-size: 60
+  # 趋势检测窗口
+  trend-window: 10
+  # 异常检测敏感度（标准差倍数）
+  anomaly-sensitivity: 2.0
+  # 尖峰检测阈值（变化率）
+  spike-threshold: 0.5

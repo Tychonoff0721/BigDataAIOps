@@ -1,0 +1,157 @@
+
+角色设定
+你是一名资深的大数据平台架构师、AI系统架构师以及后端工程师。
+请设计并生成一个完整项目，用于利用大模型（LLM）分析大数据集群组件以及 Spark 作业的健康状况。
+
+项目目标
+构建一个 AI 驱动的 AIOps 系统，能够：
+1. 接收大数据集群组件的时间序列指标。
+2. 接收 Spark 作业执行指标和运行信息。
+3. 持续维护集群上下文信息。
+4. 将指标数据发送给大模型进行分析。
+5. 输出健康状态、异常诊断和优化建议。
+
+系统能力
+
+一、组件健康分析
+
+系统需要接收来自以下组件的指标：
+
+HDFS
+YARN
+Spark
+Hive
+Kafka
+Flink
+
+每个组件会有 10-30 个监控指标，并以时间序列形式存储。
+
+示例输入，你要精心设计这个metrics（可以破坏这个结构），让这个metrics可以扩展，就是可以加减metrics的数量，并且不用改代码
+
+{
+ “cluster”:”main”, //可能有多个集群
+  "service": "hdfs", //大组件
+“component”:”namenode” //大组件内的小组件
+ “nameservice”:”hacluster” //联邦hdfs的nameservice
+  "instance": "node-1", //node实例，所在的位置
+  "timestamp": 1710000000, //时间戳
+  "metrics": {
+    "fswriteopsavgtime": 0.73, //锁操作时长
+    "memory_usage": 0.82,
+    "gc_time": 120,
+   ........
+  }
+}
+
+AI需要分析：
+
+- 组件健康状态（healthy / warning / critical）
+- 可能的故障原因
+- 运维建议
+
+二、Spark 作业分析
+
+系统需要接收 Spark Job 执行指标。
+
+示例：
+
+{
+  "job_id": "spark_job_123",
+  "app_name": "daily_etl",
+  "submit_time": 1710000000,
+  "duration": 320,
+  "executor_count": 40,
+  "executor_memory": "8g",
+  "shuffle_read": 120000000,
+  "shuffle_write": 90000000,
+  "input_size": 300000000,
+  "output_size": 120000000,
+  "physical_plan": "...",
+  "stages": [],
+  "timeline": []
+}
+
+AI需要分析：
+
+- stage 瓶颈
+- shuffle 过大
+- 数据倾斜（skew）
+- partition 不合理
+- executor 资源配置问题
+- IO 瓶颈
+
+输出包括：
+
+- 作业健康评分
+- 性能瓶颈分析
+- 优化建议
+
+三、集群上下文记忆（Cluster Context Memory）
+
+系统需要持续维护集群状态信息，例如：
+
+cluster_info
+- total_nodes
+- total_cpu
+- total_memory
+
+runtime_status
+- cluster_load
+- active_jobs
+- component_health
+
+recent_events
+- anomalies
+- failures
+
+每次调用大模型分析时都需要附带这些上下文信息，让模型持续理解集群状态。
+
+四、系统架构
+
+生成的项目需要包含以下模块：
+
+1. 指标采集 API
+2. Spark 作业数据接收 API
+3. 集群状态管理模块
+4. LLM 分析模块
+5. 流式处理 pipeline
+6. 数据存储模块
+7. Prompt 工程模块
+
+推荐数据流架构：
+
+metrics → message queue → analyzer → LLM → analysis result
+
+五、技术栈建议
+
+后端:
+Java + spring(能用spring ai框架更好)
+存储:
+Mysql
+向量存储:
+FAISS 或 Milvus
+
+大模型：
+支持OpenAI API 或本地大模型
+
+可选高级能力：
+
+1. 指标异常检测
+2. Spark 自动优化建议
+3. 集群健康评分
+4. 持续学习集群运行模式
+
+最终目标
+
+输入：
+
+- 集群组件指标
+- Spark 作业执行指标
+
+输出：
+
+- AI 诊断报告
+- 集群健康评估
+- Spark 作业优化建议
+
+系统应表现为一个智能的大数据运维 AI 助手。
