@@ -18,7 +18,8 @@ import java.util.UUID;
  * 组件指标分析服务实现类
  * 负责分析大数据集群组件的健康状态
  * 
- * TODO: 后续集成特征提取和LLM分析
+ * 这是一个基于规则的降级分析器，当LLM服务不可用时使用。
+ * 主要分析逻辑在 AIAnalysisServiceImpl 中实现。
  */
 @Slf4j
 @Service
@@ -47,17 +48,8 @@ public class ComponentMetricsAnalyzerImpl implements ComponentMetricsAnalyzer {
         result.setTargetId(metrics.getUniqueId());
         result.setTargetName(metrics.getService() + "-" + metrics.getComponent());
         
-        // TODO: 调用特征提取服务提取指标特征
-        // MetricFeatures features = featureExtractor.extract(metrics);
-        
-        // TODO: 调用LLM服务进行分析
-        // LLM会通过Tool按需查询:
-        // - RealtimeMetricsTool: 查询实时指标
-        // - LongTermStatusTool: 查询长期状态
-        // - RecentEventsTool: 查询近期事件
-        // result = llmService.analyze(features, cluster);
-        
-        // 临时：基于规则的简单分析（后续替换为LLM分析）
+        // 基于规则的分析（作为LLM分析的降级方案）
+        // 主要分析逻辑在 AIAnalysisServiceImpl 中实现
         performRuleBasedAnalysis(metrics, result);
         
         result.setAnalysisDuration(System.currentTimeMillis() - startTime);
@@ -88,10 +80,8 @@ public class ComponentMetricsAnalyzerImpl implements ComponentMetricsAnalyzer {
         AnalysisResult result = analyze(latest);
         result.setAnalysisType("time_series");
         
-        // TODO: 时间序列特征分析
-        // - 趋势分析
-        // - 异常检测
-        // - 周期性检测
+        // 时间序列特征分析（作为LLM分析的补充）
+        // 完整的时序分析在 AIAnalysisServiceImpl 中实现
         
         return result;
     }

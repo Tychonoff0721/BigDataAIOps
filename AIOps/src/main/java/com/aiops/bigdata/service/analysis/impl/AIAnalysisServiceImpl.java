@@ -7,6 +7,8 @@ import com.aiops.bigdata.entity.feature.SparkAppFeatures;
 import com.aiops.bigdata.entity.metrics.ComponentMetrics;
 import com.aiops.bigdata.entity.metrics.SparkAppMetrics;
 import com.aiops.bigdata.service.analysis.AIAnalysisService;
+import com.aiops.bigdata.service.analyzer.ComponentMetricsAnalyzer;
+import com.aiops.bigdata.service.analyzer.SparkAppAnalyzer;
 import com.aiops.bigdata.service.feature.FeatureExtractor;
 import com.aiops.bigdata.service.llm.LLMService;
 import com.aiops.bigdata.service.llm.LLMService.*;
@@ -33,6 +35,10 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     private final PromptBuilder promptBuilder;
     private final LLMService llmService;
     private final ObjectMapper objectMapper;
+    
+    // 降级分析器（当LLM不可用时使用）
+    private final ComponentMetricsAnalyzer componentMetricsAnalyzer;
+    private final SparkAppAnalyzer sparkAppAnalyzer;
     
     @Override
     public AnalysisResult analyzeComponent(ComponentMetrics metrics) {
@@ -106,13 +112,21 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 result.getHealthStatus(), result.getAnalysisDuration());
             
         } catch (Exception e) {
-            log.error("组件分析失败: {}", e.getMessage(), e);
-            result.setHealthStatus(HealthStatus.UNKNOWN);
-            result.setHealthScore(0);
+            log.error("组件分析失败: {}, 使用降级分析器", e.getMessage());
             
-            AnalysisResult.Diagnosis diagnosis = new AnalysisResult.Diagnosis();
-            diagnosis.setSummary("分析失败: " + e.getMessage());
-            result.setDiagnosis(diagnosis);
+            // 使用降级分析器
+            try {
+                ComponentMetrics fallbackMetrics = convertFeaturesToMetrics(features);
+                result = componentMetricsAnalyzer.analyze(fallbackMetrics, cluster);
+                result.setModelName("rule-based-fallback");
+            } catch (Exception fallbackError) {
+                log.error("降级分析也失败: {}", fallbackError.getMessage());
+                result.setHealthStatus(HealthStatus.UNKNOWN);
+                result.setHealthScore(0);
+                AnalysisResult.Diagnosis diagnosis = new AnalysisResult.Diagnosis();
+                diagnosis.setSummary("分析失败: " + e.getMessage());
+                result.setDiagnosis(diagnosis);
+            }
         }
         
         return result;
@@ -148,13 +162,21 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 result.getHealthStatus(), result.getAnalysisDuration());
             
         } catch (Exception e) {
-            log.error("Spark作业分析失败: {}", e.getMessage(), e);
-            result.setHealthStatus(HealthStatus.UNKNOWN);
-            result.setHealthScore(0);
+            log.error("Spark作业分析失败: {}, 使用降级分析器", e.getMessage());
             
-            AnalysisResult.Diagnosis diagnosis = new AnalysisResult.Diagnosis();
-            diagnosis.setSummary("分析失败: " + e.getMessage());
-            result.setDiagnosis(diagnosis);
+            // 使用降级分析器
+            try {
+                SparkAppMetrics fallbackMetrics = convertSparkFeaturesToMetrics(features);
+                result = sparkAppAnalyzer.analyze(fallbackMetrics, cluster);
+                result.setModelName("rule-based-fallback");
+            } catch (Exception fallbackError) {
+                log.error("降级分析也失败: {}", fallbackError.getMessage());
+                result.setHealthStatus(HealthStatus.UNKNOWN);
+                result.setHealthScore(0);
+                AnalysisResult.Diagnosis diagnosis = new AnalysisResult.Diagnosis();
+                diagnosis.setSummary("分析失败: " + e.getMessage());
+                result.setDiagnosis(diagnosis);
+            }
         }
         
         return result;
@@ -345,5 +367,54 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         result.setAnalysisType(analysisType);
         result.setHealthStatus(HealthStatus.UNKNOWN);
         return result;
+    }
+    
+    /**
+     * 将组件特征转换为组件指标（用于降级分析）
+     */
+    private ComponentMetrics convertFeaturesToMetrics(ComponentMetricFeatures features) {
+        ComponentMetrics metrics = new ComponentMetrics();
+        metrics.setCluster(features.getCluster());
+        metrics.setService(features.getService());
+        metrics.setComponent(features.getComponent());
+        metrics.setInstance(features.getInstance());
+        
+        // 从特征中提取当前值
+        if (features.getCpuUsage() != null) {
+            metrics.addMetric("cpu_usage", features.getCpuUsage().getCurrent());
+        }
+        if (features.getMemoryUsage() != null) {
+            metrics.addMetric("memory_usage", features.getMemoryUsage().getCurrent());
+        }
+        if (features.getGcTime() != null) {
+            metrics.addMetric("gc_time", features.getGcTime().getCurrent());
+        }
+        if (features.getHeapUsage() != null) {
+            metrics.addMetric("heap_usage", features.getHeapUsage().getCurrent());
+        }
+        
+        return metrics;
+    }
+    
+    /**
+     * 将Spark特征转换为Spark指标（用于降级分析）
+     */
+    private SparkAppMetrics convertSparkFeaturesToMetrics(SparkAppFeatures features) {
+        SparkAppMetrics metrics = new SparkAppMetrics();
+        metrics.setCluster(features.getCluster());
+        metrics.setJobId(features.getJobId());
+        metrics.setAppName(features.getAppName());
+        metrics.setDuration(features.getDuration());
+        metrics.setExecutorCount(features.getExecutorCount());
+        metrics.setExecutorMemoryGB(features.getExecutorMemoryGB());
+        metrics.setExecutorCores(features.getExecutorCores());
+        metrics.setInputSize(features.getInputSize());
+        metrics.setOutputSize(features.getOutputSize());
+        metrics.setShuffleRead(features.getShuffleRead());
+        metrics.setShuffleWrite(features.getShuffleWrite());
+        metrics.setSkewRatio(features.getSkewRatio());
+        metrics.setShuffleRatio(features.getShuffleRatio());
+        
+        return metrics;
     }
 }

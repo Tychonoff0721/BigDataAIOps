@@ -18,7 +18,8 @@ import java.util.UUID;
  * Spark作业分析服务实现类
  * 负责分析Spark应用程序的性能和健康状态
  * 
- * TODO: 后续集成特征提取和LLM分析
+ * 这是一个基于规则的降级分析器，当LLM服务不可用时使用。
+ * 主要分析逻辑在 AIAnalysisServiceImpl 中实现。
  */
 @Slf4j
 @Service
@@ -46,17 +47,8 @@ public class SparkAppAnalyzerImpl implements SparkAppAnalyzer {
         result.setTargetId(metrics.getUniqueId());
         result.setTargetName(metrics.getAppName());
         
-        // TODO: 调用特征提取服务提取作业特征
-        // SparkAppFeatures features = featureExtractor.extract(metrics);
-        
-        // TODO: 调用LLM服务进行分析
-        // LLM会通过Tool按需查询:
-        // - RealtimeMetricsTool: 查询实时指标
-        // - LongTermStatusTool: 查询长期状态
-        // - RecentEventsTool: 查询近期事件
-        // result = llmService.analyze(features, cluster);
-        
-        // 临时：基于规则的分析
+        // 基于规则的分析（作为LLM分析的降级方案）
+        // 主要分析逻辑在 AIAnalysisServiceImpl 中实现
         performRuleBasedAnalysis(metrics, result);
         
         result.setAnalysisDuration(System.currentTimeMillis() - startTime);

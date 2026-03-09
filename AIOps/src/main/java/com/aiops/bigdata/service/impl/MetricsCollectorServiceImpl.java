@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * 指标收集服务实现类
  * 负责接收和存储各类指标数据
  * 
- * TODO: 后续集成持久化存储（MySQL/时序数据库）和消息队列（Kafka）
+ * 已集成Redis实时存储，内存缓存作为备份。
  */
 @Slf4j
 @Service
@@ -30,16 +30,15 @@ public class MetricsCollectorServiceImpl implements MetricsCollectorService {
     private final RealtimeMetricsService realtimeMetricsService;
     
     /**
-     * 组件指标缓存（临时方案）
+     * 组件指标缓存（备份）
      * Key: 组件唯一标识, Value: 指标列表（按时间排序）
-     * TODO: 替换为持久化存储
+     * 主存储在Redis中（通过RealtimeMetricsService）
      */
     private final Map<String, List<ComponentMetrics>> componentMetricsCache = new ConcurrentHashMap<>();
     
     /**
-     * Spark作业指标缓存（临时方案）
+     * Spark作业指标缓存（备份）
      * Key: 作业ID, Value: 作业指标
-     * TODO: 替换为持久化存储
      */
     private final Map<String, SparkAppMetrics> sparkAppMetricsCache = new ConcurrentHashMap<>();
     
