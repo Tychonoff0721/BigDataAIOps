@@ -8,7 +8,11 @@ import java.util.Map;
 /**
  * LLM服务接口
  * 负责与大模型交互，支持Tool Calling
+ * 
+ * @deprecated 请使用 Spring AI 的 ChatClient 替代
+ *             新版本基于 Spring AI 框架，自动处理 Function Calling
  */
+@Deprecated
 public interface LLMService {
     
     /**

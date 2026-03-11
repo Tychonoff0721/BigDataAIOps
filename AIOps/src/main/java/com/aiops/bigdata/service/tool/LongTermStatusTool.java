@@ -8,7 +8,11 @@ import java.util.List;
 /**
  * LLM Tool: 长期状态查询工具
  * 供大模型调用来查询长期状态数据
+ * 
+ * @deprecated 请使用 {@link com.aiops.bigdata.service.ai.function.LongTermStatusFunction} 替代
+ *             新版本基于 Spring AI Function 实现
  */
+@Deprecated
 public interface LongTermStatusTool {
     
     /**

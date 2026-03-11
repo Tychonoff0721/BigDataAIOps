@@ -9,7 +9,11 @@ import java.util.List;
 /**
  * LLM Tool: 近期事件查询工具
  * 供大模型调用来查询近期事件和告警
+ * 
+ * @deprecated 请使用 {@link com.aiops.bigdata.service.ai.function.RecentEventsFunction} 替代
+ *             新版本基于 Spring AI Function 实现
  */
+@Deprecated
 public interface RecentEventsTool {
     
     /**

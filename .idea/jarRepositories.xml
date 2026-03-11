@@ -3,6 +3,11 @@
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
       <option name="id" value="aliyun-public" />
+      <option name="name" value="Aliyun Public Repository" />
+      <option name="url" value="https://maven.aliyun.com/repository/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="aliyun-public" />
       <option name="name" value="aliyun-public" />
       <option name="url" value="https://maven.aliyun.com/repository/public" />
     </remote-repository>

@@ -1,9 +1,11 @@
 package com.aiops.bigdata.service.llm;
 
 import com.aiops.bigdata.entity.common.enums.HealthStatus;
+import com.aiops.bigdata.service.tool.MetricsTimeSeriesTool;
 import com.aiops.bigdata.service.tool.RecentEventsTool;
 import com.aiops.bigdata.service.tool.RealtimeMetricsTool;
 import com.aiops.bigdata.service.tool.LongTermStatusTool;
+import com.aiops.bigdata.service.tool.SparkJobTool;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class LLMServiceImpl implements LLMService {
     private final RealtimeMetricsTool realtimeMetricsTool;
     private final LongTermStatusTool longTermStatusTool;
     private final RecentEventsTool recentEventsTool;
+    private final MetricsTimeSeriesTool metricsTimeSeriesTool;
+    private final SparkJobTool sparkJobTool;
     
     @Override
     public LLMResponse analyze(String systemPrompt, String userPrompt, List<ToolDefinition> availableTools) {
@@ -93,6 +97,30 @@ public class LLMServiceImpl implements LLMService {
                     
                     recentEventsTool.execute(cluster, severityEnum, null, false, limit);
                     yield recentEventsTool.getUnresolvedAlertsSummary(cluster);
+                }
+                
+                case "get_metrics_timeseries" -> {
+                    String storageId = (String) arguments.get("storage_id");
+                    String metricName = (String) arguments.get("metric_name");
+                    Integer minutes = arguments.get("minutes") != null 
+                        ? ((Number) arguments.get("minutes")).intValue() : null;
+                    
+                    if (storageId == null) {
+                        yield "{\"error\": \"storage_id参数必填\"}";
+                    }
+                    
+                    yield metricsTimeSeriesTool.execute(storageId, metricName, minutes);
+                }
+                
+                case "get_spark_job" -> {
+                    String jobId = (String) arguments.get("job_id");
+                    String detailType = (String) arguments.get("detail_type");
+                    
+                    if (jobId == null) {
+                        yield "{\"error\": \"job_id参数必填\"}";
+                    }
+                    
+                    yield sparkJobTool.execute(jobId, detailType);
                 }
                 
                 default -> "{\"error\": \"未知工具: " + toolName + "\"}";

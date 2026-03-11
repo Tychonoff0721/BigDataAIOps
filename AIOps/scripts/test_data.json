@@ -1,0 +1,402 @@
+[
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4604,
+    "memoryUsage": 0.7281,
+    "gcTime": 1613,
+    "timestamp": 1773214969,
+    "metrics": {
+      "connection_count": 145,
+      "thread_count": 169,
+      "heap_used_mb": 2982,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 143.33,
+      "disk_io_write_mb": 74.22,
+      "network_in_kb": 4461.72,
+      "network_out_kb": 395.83
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3838,
+    "memoryUsage": 0.6897,
+    "gcTime": 954,
+    "timestamp": 1773215029,
+    "metrics": {
+      "connection_count": 132,
+      "thread_count": 183,
+      "heap_used_mb": 2825,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 88.75,
+      "disk_io_write_mb": 79.72,
+      "network_in_kb": 2690.63,
+      "network_out_kb": 1651.21
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4601,
+    "memoryUsage": 0.7279,
+    "gcTime": 954,
+    "timestamp": 1773215089,
+    "metrics": {
+      "connection_count": 393,
+      "thread_count": 102,
+      "heap_used_mb": 2981,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 17.66,
+      "disk_io_write_mb": 49.11,
+      "network_in_kb": 1948.9,
+      "network_out_kb": 505.48
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3034,
+    "memoryUsage": 0.6495,
+    "gcTime": 1669,
+    "timestamp": 1773215149,
+    "metrics": {
+      "connection_count": 221,
+      "thread_count": 104,
+      "heap_used_mb": 2660,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 490.62,
+      "disk_io_write_mb": 100.79,
+      "network_in_kb": 749.68,
+      "network_out_kb": 151.03
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3764,
+    "memoryUsage": 0.686,
+    "gcTime": 1353,
+    "timestamp": 1773215209,
+    "metrics": {
+      "connection_count": 264,
+      "thread_count": 141,
+      "heap_used_mb": 2809,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 143.73,
+      "disk_io_write_mb": 20.14,
+      "network_in_kb": 2184.14,
+      "network_out_kb": 686.46
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4798,
+    "memoryUsage": 0.7378,
+    "gcTime": 980,
+    "timestamp": 1773215269,
+    "metrics": {
+      "connection_count": 316,
+      "thread_count": 68,
+      "heap_used_mb": 3021,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 352.28,
+      "disk_io_write_mb": 78.69,
+      "network_in_kb": 4551.95,
+      "network_out_kb": 223.94
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3672,
+    "memoryUsage": 0.6814,
+    "gcTime": 1863,
+    "timestamp": 1773215329,
+    "metrics": {
+      "connection_count": 310,
+      "thread_count": 145,
+      "heap_used_mb": 2791,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 308.2,
+      "disk_io_write_mb": 84.17,
+      "network_in_kb": 4648.82,
+      "network_out_kb": 351.77
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.341,
+    "memoryUsage": 0.6683,
+    "gcTime": 981,
+    "timestamp": 1773215389,
+    "metrics": {
+      "connection_count": 256,
+      "thread_count": 59,
+      "heap_used_mb": 2737,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 49.64,
+      "disk_io_write_mb": 183.23,
+      "network_in_kb": 874.5,
+      "network_out_kb": 1850.16
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3943,
+    "memoryUsage": 0.695,
+    "gcTime": 948,
+    "timestamp": 1773215449,
+    "metrics": {
+      "connection_count": 50,
+      "thread_count": 104,
+      "heap_used_mb": 2846,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 439.78,
+      "disk_io_write_mb": 172.74,
+      "network_in_kb": 2799.11,
+      "network_out_kb": 1223.49
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3477,
+    "memoryUsage": 0.6717,
+    "gcTime": 1294,
+    "timestamp": 1773215509,
+    "metrics": {
+      "connection_count": 217,
+      "thread_count": 160,
+      "heap_used_mb": 2751,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 64.4,
+      "disk_io_write_mb": 12.03,
+      "network_in_kb": 471.83,
+      "network_out_kb": 1944.59
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4563,
+    "memoryUsage": 0.726,
+    "gcTime": 1876,
+    "timestamp": 1773215569,
+    "metrics": {
+      "connection_count": 334,
+      "thread_count": 69,
+      "heap_used_mb": 2973,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 30.08,
+      "disk_io_write_mb": 176.77,
+      "network_in_kb": 3926.04,
+      "network_out_kb": 1500.72
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3987,
+    "memoryUsage": 0.6972,
+    "gcTime": 990,
+    "timestamp": 1773215629,
+    "metrics": {
+      "connection_count": 319,
+      "thread_count": 182,
+      "heap_used_mb": 2855,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 88.22,
+      "disk_io_write_mb": 133.02,
+      "network_in_kb": 2867.98,
+      "network_out_kb": 766.22
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3669,
+    "memoryUsage": 0.6813,
+    "gcTime": 973,
+    "timestamp": 1773215689,
+    "metrics": {
+      "connection_count": 336,
+      "thread_count": 126,
+      "heap_used_mb": 2790,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 281.55,
+      "disk_io_write_mb": 105.72,
+      "network_in_kb": 1027.9,
+      "network_out_kb": 1629.61
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3422,
+    "memoryUsage": 0.6689,
+    "gcTime": 1439,
+    "timestamp": 1773215749,
+    "metrics": {
+      "connection_count": 156,
+      "thread_count": 163,
+      "heap_used_mb": 2739,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 325.54,
+      "disk_io_write_mb": 107.85,
+      "network_in_kb": 1279.44,
+      "network_out_kb": 220.16
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4653,
+    "memoryUsage": 0.7305,
+    "gcTime": 935,
+    "timestamp": 1773215809,
+    "metrics": {
+      "connection_count": 218,
+      "thread_count": 66,
+      "heap_used_mb": 2992,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 145.61,
+      "disk_io_write_mb": 98.39,
+      "network_in_kb": 3976.3,
+      "network_out_kb": 1260.0
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.328,
+    "memoryUsage": 0.6618,
+    "gcTime": 1113,
+    "timestamp": 1773215869,
+    "metrics": {
+      "connection_count": 349,
+      "thread_count": 145,
+      "heap_used_mb": 2710,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 88.88,
+      "disk_io_write_mb": 96.9,
+      "network_in_kb": 1488.37,
+      "network_out_kb": 502.45
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4513,
+    "memoryUsage": 0.7235,
+    "gcTime": 1281,
+    "timestamp": 1773215929,
+    "metrics": {
+      "connection_count": 283,
+      "thread_count": 167,
+      "heap_used_mb": 2963,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 474.31,
+      "disk_io_write_mb": 135.94,
+      "network_in_kb": 297.99,
+      "network_out_kb": 1738.38
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4688,
+    "memoryUsage": 0.7322,
+    "gcTime": 1602,
+    "timestamp": 1773215989,
+    "metrics": {
+      "connection_count": 194,
+      "thread_count": 151,
+      "heap_used_mb": 2999,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 450.74,
+      "disk_io_write_mb": 23.0,
+      "network_in_kb": 4118.53,
+      "network_out_kb": 769.38
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.4614,
+    "memoryUsage": 0.7285,
+    "gcTime": 1784,
+    "timestamp": 1773216049,
+    "metrics": {
+      "connection_count": 218,
+      "thread_count": 83,
+      "heap_used_mb": 2984,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 278.42,
+      "disk_io_write_mb": 196.92,
+      "network_in_kb": 1947.72,
+      "network_out_kb": 1351.38
+    }
+  },
+  {
+    "cluster": "bigdata-prod",
+    "service": "hdfs",
+    "component": "namenode",
+    "instance": "na3",
+    "cpuUsage": 0.3607,
+    "memoryUsage": 0.6782,
+    "gcTime": 1818,
+    "timestamp": 1773216109,
+    "metrics": {
+      "connection_count": 86,
+      "thread_count": 156,
+      "heap_used_mb": 2777,
+      "heap_max_mb": 4096,
+      "disk_io_read_mb": 264.53,
+      "disk_io_write_mb": 85.47,
+      "network_in_kb": 2494.59,
+      "network_out_kb": 834.2
+    }
+  }
+]

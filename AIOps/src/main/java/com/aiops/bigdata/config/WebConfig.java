@@ -17,8 +17,8 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 静态资源映射 - 根路径直接访问
-        registry.addResourceHandler("/**")
+        // 静态资源映射 - 只对根路径和非API路径生效
+        registry.addResourceHandler("/", "/index.html", "/static/**")
                 .addResourceLocations("classpath:/static/");
     }
     

@@ -55,6 +55,16 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
     enabled: false
+  
+  # Spring AI 配置
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-mock}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-4o-mini}
+          temperature: 0.7
 
 # 服务配置
 server:
@@ -81,38 +91,7 @@ aiops:
   
   # LLM配置
   llm:
-    # 当前使用的provider: openai, claude, local, mock
-    provider: mock
-    
-    # OpenAI配置
-    openai:
-      enabled: false
-      api-key: ${OPENAI_API_KEY:sk-xxx}
-      base-url: https://api.openai.com/v1
-      model: gpt-4
-      temperature: 0.7
-      max-tokens: 2000
-      timeout-seconds: 60
-    
-    # Claude配置
-    claude:
-      enabled: false
-      api-key: ${CLAUDE_API_KEY:sk-xxx}
-      base-url: https://api.anthropic.com/v1
-      model: claude-3-opus-20240229
-      max-tokens: 2000
-      timeout-seconds: 60
-    
-    # 本地模型配置
-    local:
-      enabled: false
-      base-url: http://localhost:8000/v1
-      model: local-model
-      api-key: ${LOCAL_LLM_API_KEY:}
-      timeout-seconds: 120
-    
-    # Mock配置（开发测试用）
-    mock:
-      enabled: true
-      simulate-delay: true
-      delay-ms: 500
+    # 是否使用 Mock 模式（当真实 LLM 不可用时）
+    use-mock: true
+    # Mock 模式延迟（毫秒）
+    mock-delay-ms: 500

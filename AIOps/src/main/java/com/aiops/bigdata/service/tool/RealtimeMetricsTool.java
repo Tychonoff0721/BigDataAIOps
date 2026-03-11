@@ -7,7 +7,11 @@ import java.util.List;
 /**
  * LLM Tool: 实时指标查询工具
  * 供大模型调用来查询实时指标数据
+ * 
+ * @deprecated 请使用 {@link com.aiops.bigdata.service.ai.function.RealtimeMetricsFunction} 替代
+ *             新版本基于 Spring AI Function 实现
  */
+@Deprecated
 public interface RealtimeMetricsTool {
     
     /**
