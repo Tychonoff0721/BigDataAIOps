@@ -4,6 +4,8 @@ import com.aiops.bigdata.entity.context.RealtimeMetrics;
 import com.aiops.bigdata.service.context.RealtimeMetricsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.model.function.FunctionCallback;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
@@ -110,4 +112,16 @@ public class RealtimeMetricsFunction
         String content,        // 查询结果内容
         boolean success        // 是否成功
     ) {}
+    
+    /**
+     * 注册 FunctionCallback Bean，供 Spring AI 调用
+     */
+    @Bean
+    public FunctionCallback realtimeMetricsFunctionCallback() {
+        return FunctionCallback.builder()
+            .function("getRealtimeMetrics", this)
+            .description("获取集群组件的实时监控指标，包括CPU、内存、GC时间等。参数: cluster(集群名称，必填), service(服务类型，可选), component(组件类型，可选)")
+            .inputType(Request.class)
+            .build();
+    }
 }

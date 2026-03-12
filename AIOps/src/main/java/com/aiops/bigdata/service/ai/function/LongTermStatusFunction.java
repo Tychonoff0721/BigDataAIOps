@@ -3,6 +3,8 @@ package com.aiops.bigdata.service.ai.function;
 import com.aiops.bigdata.service.context.LongTermStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.model.function.FunctionCallback;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
@@ -103,4 +105,16 @@ public class LongTermStatusFunction
         String content,        // 查询结果内容
         boolean success        // 是否成功
     ) {}
+    
+    /**
+     * 注册 FunctionCallback Bean，供 Spring AI 调用
+     */
+    @Bean
+    public FunctionCallback longTermStatusFunctionCallback() {
+        return FunctionCallback.builder()
+            .function("getLongTermStatus", this)
+            .description("获取集群的长期运行状态，包括节点资源、HDFS状态、YARN状态、Spark作业统计等。参数: cluster(集群名称，必填)")
+            .inputType(Request.class)
+            .build();
+    }
 }

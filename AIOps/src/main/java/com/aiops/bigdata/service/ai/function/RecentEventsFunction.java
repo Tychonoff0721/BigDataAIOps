@@ -4,6 +4,8 @@ import com.aiops.bigdata.entity.common.enums.HealthStatus;
 import com.aiops.bigdata.service.context.RecentEventsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.model.function.FunctionCallback;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
@@ -90,4 +92,16 @@ public class RecentEventsFunction
         String content,        // 查询结果内容
         boolean success        // 是否成功
     ) {}
+    
+    /**
+     * 注册 FunctionCallback Bean，供 Spring AI 调用
+     */
+    @Bean
+    public FunctionCallback recentEventsFunctionCallback() {
+        return FunctionCallback.builder()
+            .function("getRecentEvents", this)
+            .description("获取集群最近的告警和异常事件，用于了解集群当前存在的问题。参数: cluster(集群名称，必填), severity(严重程度: warning/critical，可选), limit(返回数量限制，可选)")
+            .inputType(Request.class)
+            .build();
+    }
 }
