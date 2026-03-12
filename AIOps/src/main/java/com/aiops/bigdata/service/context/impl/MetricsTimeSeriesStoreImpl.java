@@ -192,55 +192,109 @@ public class MetricsTimeSeriesStoreImpl implements MetricsTimeSeriesStore {
         ComponentMetrics latest = metricsList.get(metricsList.size() - 1);
         
         StringBuilder sb = new StringBuilder();
-        sb.append("=== 时间序列数据摘要 ===\n");
-        sb.append("【重要说明】这是一组时间序列数据，包含同一组件在不同时间点的多个指标采样。\n");
-        sb.append("请分析指标随时间的变化趋势，而不仅仅是单个数值。\n\n");
+        sb.append("=== 时序数据特征摘要 ===\n\n");
         
-        sb.append("## 组件信息\n");
-        sb.append(String.format("服务: %s\n", first.getService()));
-        sb.append(String.format("组件: %s\n", first.getComponent()));
+        // 1. 组件信息（精简）
+        sb.append(String.format("组件: %s/%s", first.getService(), first.getComponent()));
         if (first.getInstance() != null) {
-            sb.append(String.format("实例: %s\n", first.getInstance()));
+            sb.append(":").append(first.getInstance());
         }
-        sb.append(String.format("集群: %s\n", first.getCluster()));
-        sb.append("\n");
+        sb.append(String.format(" | 数据点: %d | ", metricsList.size()));
         
-        sb.append("## 时序数据特征\n");
-        sb.append(String.format("数据点数量: %d 个\n", metricsList.size()));
-        
-        // 时间范围和采样间隔
+        // 时间范围
         if (first.getTimestamp() != null && latest.getTimestamp() != null) {
             long duration = latest.getTimestamp() - first.getTimestamp();
-            long interval = metricsList.size() > 1 ? duration / (metricsList.size() - 1) : 0;
-            sb.append(String.format("时间跨度: %d 秒 (%.1f 分钟)\n", duration, duration / 60.0));
-            sb.append(String.format("采样间隔: 约 %d 秒\n", interval));
-            sb.append(String.format("起始时间: %s\n", formatTimestamp(first.getTimestamp())));
-            sb.append(String.format("结束时间: %s\n", formatTimestamp(latest.getTimestamp())));
+            sb.append(String.format("跨度: %.1f分钟", duration / 60.0));
         }
-        sb.append("\n");
+        sb.append("\n\n");
         
-        // 收集所有指标名称
-        Set<String> metricNames = new HashSet<>();
+        // 2. 一次性计算所有指标的统计特征
+        Map<String, List<Double>> allMetricValues = new LinkedHashMap<>();
+        
+        // 收集所有指标值
         for (ComponentMetrics m : metricsList) {
+            // 直接字段
+            if (m.getCpuUsage() != null) {
+                allMetricValues.computeIfAbsent("cpu_usage", k -> new ArrayList<>()).add(m.getCpuUsage());
+            }
+            if (m.getMemoryUsage() != null) {
+                allMetricValues.computeIfAbsent("memory_usage", k -> new ArrayList<>()).add(m.getMemoryUsage());
+            }
+            if (m.getGcTime() != null) {
+                allMetricValues.computeIfAbsent("gc_time", k -> new ArrayList<>()).add(m.getGcTime().doubleValue());
+            }
+            if (m.getConnectionCount() != null) {
+                allMetricValues.computeIfAbsent("connection_count", k -> new ArrayList<>()).add(m.getConnectionCount().doubleValue());
+            }
+            // 动态指标
             if (m.getMetrics() != null) {
-                metricNames.addAll(m.getMetrics().keySet());
+                for (Map.Entry<String, Object> entry : m.getMetrics().entrySet()) {
+                    if (entry.getValue() instanceof Number) {
+                        allMetricValues.computeIfAbsent(entry.getKey(), k -> new ArrayList<>())
+                            .add(((Number) entry.getValue()).doubleValue());
+                    }
+                }
             }
         }
         
-        // 添加直接字段
-        if (metricsList.get(0).getCpuUsage() != null) metricNames.add("cpu_usage");
-        if (metricsList.get(0).getMemoryUsage() != null) metricNames.add("memory_usage");
-        if (metricsList.get(0).getGcTime() != null) metricNames.add("gc_time");
-        if (metricsList.get(0).getConnectionCount() != null) metricNames.add("connection_count");
+        // 3. 输出精简的指标特征（每指标一行）
+        sb.append("【指标特征】当前值 | 最小-最大 | 平均 | 趋势 | 状态\n");
+        sb.append("-".repeat(50)).append("\n");
         
-        sb.append(String.format("## 监控指标 (%d个)\n", metricNames.size()));
-        sb.append("指标列表: ").append(String.join(", ", metricNames)).append("\n\n");
+        for (Map.Entry<String, List<Double>> entry : allMetricValues.entrySet()) {
+            String name = entry.getKey();
+            List<Double> values = entry.getValue();
+            
+            if (values.isEmpty()) continue;
+            
+            double current = values.get(values.size() - 1);
+            double min = values.stream().mapToDouble(Double::doubleValue).min().orElse(0);
+            double max = values.stream().mapToDouble(Double::doubleValue).max().orElse(0);
+            double avg = values.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+            
+            // 趋势判断
+            String trend = "→";  // 稳定
+            if (values.size() >= 3) {
+                int mid = values.size() / 2;
+                double firstHalf = values.subList(0, mid).stream().mapToDouble(Double::doubleValue).average().orElse(0);
+                double secondHalf = values.subList(mid, values.size()).stream().mapToDouble(Double::doubleValue).average().orElse(0);
+                if (secondHalf > firstHalf * 1.1) trend = "↑";  // 上升
+                else if (secondHalf < firstHalf * 0.9) trend = "↓";  // 下降
+            }
+            
+            // 状态判断
+            String status = "正常";
+            if (name.contains("cpu") || name.contains("memory")) {
+                if (current > 0.9) status = "⚠️告警";
+                else if (current > 0.8) status = "⚠️警告";
+            }
+            
+            sb.append(String.format("%-15s %.2f | %.2f-%.2f | %.2f | %s | %s\n", 
+                name, current, min, max, avg, trend, status));
+        }
         
-        // 各指标统计
-        sb.append("## 各指标时序统计\n");
-        sb.append("(以下数据展示各指标在时间序列中的变化情况)\n\n");
-        for (String metricName : metricNames) {
-            sb.append(getMetricTrend(storageId, metricName)).append("\n");
+        // 4. 异常检测摘要
+        sb.append("\n【异常检测】\n");
+        List<String> anomalies = new ArrayList<>();
+        for (Map.Entry<String, List<Double>> entry : allMetricValues.entrySet()) {
+            String name = entry.getKey();
+            List<Double> values = entry.getValue();
+            double current = values.get(values.size() - 1);
+            
+            if (name.contains("cpu") && current > 0.8) {
+                anomalies.add(String.format("CPU使用率过高: %.1f%%", current * 100));
+            }
+            if (name.contains("memory") && current > 0.8) {
+                anomalies.add(String.format("内存使用率过高: %.1f%%", current * 100));
+            }
+        }
+        
+        if (anomalies.isEmpty()) {
+            sb.append("未检测到明显异常\n");
+        } else {
+            for (String anomaly : anomalies) {
+                sb.append("- ").append(anomaly).append("\n");
+            }
         }
         
         return sb.toString();

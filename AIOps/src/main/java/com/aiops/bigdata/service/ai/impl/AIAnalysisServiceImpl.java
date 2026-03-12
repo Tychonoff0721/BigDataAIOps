@@ -49,43 +49,10 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
     
     // 系统提示词
     private static final String SYSTEM_PROMPT = """
-        你是一个专业的大数据运维分析专家。你的任务是分析大数据集群的运行状态，识别潜在问题并给出优化建议。
+        你是大数据运维分析专家。根据工具返回的特征数据，诊断问题并给出建议。
         
-        ## 关于时序数据的重要说明
-        
-        当你调用 getMetricsTimeSeries 工具时，返回的数据是**时间序列数据（Time Series Data）**：
-        - 这是同一个组件在不同时间点采集的指标数据集合
-        - 数据按时间顺序排列，每个数据点包含时间戳(timestamp)
-        - 你需要分析指标随时间的变化趋势，而不仅仅是单个数值
-        - 重点关注：上升趋势、下降趋势、异常波动、周期性模式
-        
-        时序数据分析要点：
-        1. 趋势分析：CPU/内存使用率是否持续上升或下降
-        2. 异常检测：是否存在突增或突降的异常点
-        3. 阈值判断：当前值是否接近或超过告警阈值
-        4. 关联分析：多个指标之间是否存在关联变化
-        
-        ## 分析步骤
-        
-        1. 首先调用工具获取数据摘要，了解数据基本情况
-        2. 分析时序数据的时间跨度和采样间隔
-        3. 识别关键指标的变化趋势和异常点
-        4. 结合多种数据源进行综合判断
-        5. 给出诊断结论和优化建议
-        
-        ## 输出格式
-        
-        请以JSON格式返回分析结果，格式如下：
-        {
-          "health_status": "healthy|warning|critical|unknown",
-          "health_score": 0-100,
-          "diagnosis": {
-            "summary": "问题摘要",
-            "root_cause": "根因分析",
-            "issues": [{"type": "问题类型", "severity": "warning|critical", "title": "问题标题", "description": "详细描述"}]
-          },
-          "recommendations": [{"type": "建议类型", "priority": 1-5, "title": "建议标题", "description": "详细说明", "actions": ["具体步骤"]}]
-        }
+        输出JSON格式：
+        {"health_status":"healthy|warning|critical","health_score":0-100,"diagnosis":{"summary":"摘要","root_cause":"根因","issues":[{"type":"类型","severity":"warning|critical","title":"标题","description":"描述"}]},"recommendations":[{"type":"类型","priority":1,"title":"标题","description":"说明","actions":["步骤"]}]}
         """;
     
     @Override
@@ -101,21 +68,9 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setTargetName(extractTargetName(summary));
             
             // 构建用户提示词
-            String userPrompt = String.format("""
-                请分析以下组件的时间序列指标数据：
-                
-                存储ID: %s
-                集群: %s
-                
-                【重要】这是一组时间序列数据，包含同一组件在不同时间点的多个指标采样。
-                
-                请按以下步骤分析：
-                1. 使用 getMetricsTimeSeries 工具获取时序数据详情
-                2. 分析数据的时间跨度和采样间隔
-                3. 识别各指标（CPU、内存、GC等）随时间的变化趋势
-                4. 检测是否存在异常波动或突变点
-                5. 综合评估组件健康状态并给出优化建议
-                """, storageId, cluster);
+            String userPrompt = String.format(
+                "分析组件时序指标，storageId=%s, cluster=%s。调用getMetricsTimeSeries获取特征数据后诊断。", 
+                storageId, cluster);
             
             // 调用 LLM
             String response = callLLM(userPrompt);
@@ -146,21 +101,9 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             result.setTargetName(extractAppName(summary));
             
             // 构建用户提示词
-            String userPrompt = String.format("""
-                请分析以下Spark作业：
-                
-                作业ID: %s
-                集群: %s
-                
-                请使用 getSparkJob 工具查看作业详情，分析执行情况，
-                识别性能瓶颈，并给出优化建议。
-                
-                建议分析顺序：
-                1. 先获取作业摘要了解基本情况
-                2. 查看Stage详情识别耗时Stage
-                3. 查看Executor详情检查资源使用
-                4. 获取瓶颈分析定位主要问题
-                """, jobId, cluster);
+            String userPrompt = String.format(
+                "分析Spark作业，jobId=%s, cluster=%s。调用getSparkJob获取详情后诊断。", 
+                jobId, cluster);
             
             // 调用 LLM
             String response = callLLM(userPrompt);
@@ -187,14 +130,9 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
         result.setTargetName(cluster);
         
         try {
-            String userPrompt = String.format("""
-                请分析以下集群的整体状态：
-                
-                集群: %s
-                
-                请使用提供的工具获取集群的实时指标、长期状态和最近告警，
-                进行综合分析并给出健康评估和优化建议。
-                """, cluster);
+            String userPrompt = String.format(
+                "分析集群状态，cluster=%s。调用getRealtimeMetrics/getLongTermStatus/getRecentEvents获取数据后诊断。", 
+                cluster);
             
             String response = callLLM(userPrompt);
             parseAnalysisResult(response, result);
@@ -215,16 +153,35 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
      * 调用 LLM（Spring AI 或 Mock）
      */
     private String callLLM(String userPrompt) {
-        log.info("调用 LLM 分析, useMock={}", useMock);
+        log.info("\n" + "=".repeat(60));
+        log.info("【LLM 调用开始】");
+        log.info("=".repeat(60));
+        log.info("Mock模式: {}", useMock);
         
         if (useMock) {
+            log.info("使用 Mock 模式生成响应");
             return generateMockResponse(userPrompt);
         }
         
         try {
+            // 打印 System Prompt
+            log.info("\n---------- 【System Prompt】 ----------");
+            log.info(SYSTEM_PROMPT);
+            
+            // 打印 User Prompt
+            log.info("\n---------- 【User Prompt】 ----------");
+            log.info(userPrompt);
+            log.info("----------------------------------------");
+            
+            log.info("\n构建 ChatClient...");
             ChatClient chatClient = chatClientBuilder
                 .defaultSystem(SYSTEM_PROMPT)
                 .build();
+            
+            log.info("注册的函数: getMetricsTimeSeries, getSparkJob, getRealtimeMetrics, getLongTermStatus, getRecentEvents");
+            log.info("发送请求到 LLM...\n");
+            
+            long startTime = System.currentTimeMillis();
             
             String response = chatClient.prompt()
                 .user(userPrompt)
@@ -233,11 +190,31 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
                 .call()
                 .content();
             
-            log.info("Spring AI 调用成功");
+            long duration = System.currentTimeMillis() - startTime;
+            
+            // 打印 LLM 响应
+            log.info("\n---------- 【LLM 响应】 耗时:{}ms ----------", duration);
+            log.info(response);
+            log.info("=".repeat(60) + "\n");
+            
             return response;
             
         } catch (Exception e) {
-            log.warn("Spring AI 调用失败，降级使用 Mock 模式: {}", e.getMessage());
+            log.error("\n" + "=".repeat(60));
+            log.error("【LLM 调用失败】");
+            log.error("=".repeat(60));
+            log.error("异常类型: {}", e.getClass().getName());
+            log.error("异常消息: {}", e.getMessage());
+            log.error("完整堆栈信息:", e);
+            
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                log.error("Cause 类型: {}", cause.getClass().getName());
+                log.error("Cause 消息: {}", cause.getMessage());
+                log.error("Cause 堆栈:", cause);
+            }
+            
+            log.warn("降级使用 Mock 模式生成响应\n");
             return generateMockResponse(userPrompt);
         }
     }
@@ -483,5 +460,51 @@ public class AIAnalysisServiceImpl implements AIAnalysisService {
             log.debug("提取应用名称失败: {}", e.getMessage());
         }
         return "Unknown";
+    }
+    
+    @Override
+    public String testSimpleCall(String prompt) {
+        log.info("========== 测试 Spring AI 简单调用 ==========");
+        log.info("useMock={}", useMock);
+        log.info("提示词: {}", prompt);
+        
+        if (useMock) {
+            log.info("使用 Mock 模式");
+            return "Mock 响应: 测试成功";
+        }
+        
+        try {
+            log.info("构建 ChatClient...");
+            ChatClient chatClient = chatClientBuilder.build();
+            log.info("ChatClient 构建成功，开始调用...");
+            
+            long startTime = System.currentTimeMillis();
+            
+            String response = chatClient.prompt()
+                .user(prompt)
+                .call()
+                .content();
+            
+            long duration = System.currentTimeMillis() - startTime;
+            log.info("调用成功，耗时: {}ms", duration);
+            log.info("响应内容: {}", response);
+            
+            return response;
+            
+        } catch (Exception e) {
+            log.error("========== 测试调用失败 ==========");
+            log.error("异常类型: {}", e.getClass().getName());
+            log.error("异常消息: {}", e.getMessage());
+            log.error("完整堆栈:", e);
+            
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                log.error("Cause 类型: {}", cause.getClass().getName());
+                log.error("Cause 消息: {}", cause.getMessage());
+                log.error("Cause 堆栈:", cause);
+            }
+            
+            throw new RuntimeException("Spring AI 调用失败: " + e.getMessage(), e);
+        }
     }
 }

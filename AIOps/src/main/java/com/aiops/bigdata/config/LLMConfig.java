@@ -12,11 +12,12 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * LLM配置类
- * 根据配置创建对应的LLM Provider
+ * @deprecated 使用 Spring AI 的 ChatClient 替代
  */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@Deprecated
 public class LLMConfig {
     
     private final LLMProperties llmProperties;

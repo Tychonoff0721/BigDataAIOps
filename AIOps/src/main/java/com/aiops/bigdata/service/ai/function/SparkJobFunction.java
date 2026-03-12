@@ -3,6 +3,7 @@ package com.aiops.bigdata.service.ai.function;
 import com.aiops.bigdata.service.context.SparkJobStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
@@ -13,6 +14,7 @@ import java.util.function.Function;
  */
 @Slf4j
 @Component("getSparkJob")
+@Description("获取Spark作业的详细信息，包括作业摘要、Stage详情、Executor详情和瓶颈分析。参数: jobId(作业ID，必填), detailType(详情类型: summary/stages/executors/bottleneck，可选)")
 @RequiredArgsConstructor
 public class SparkJobFunction 
         implements Function<SparkJobFunction.Request, SparkJobFunction.Response> {

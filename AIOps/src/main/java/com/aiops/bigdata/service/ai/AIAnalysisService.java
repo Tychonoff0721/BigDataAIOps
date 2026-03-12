@@ -32,4 +32,12 @@ public interface AIAnalysisService {
      * @return 分析结果
      */
     AnalysisResult analyzeCluster(String cluster);
+    
+    /**
+     * 测试简单调用（用于调试）
+     * 
+     * @param prompt 提示词
+     * @return 响应内容
+     */
+    String testSimpleCall(String prompt);
 }

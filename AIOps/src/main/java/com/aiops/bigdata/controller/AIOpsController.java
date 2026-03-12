@@ -492,4 +492,29 @@ public class AIOpsController {
             "app_name", metrics.getAppName()
         ));
     }
+    
+    /**
+     * 测试 Spring AI 配置
+     */
+    @GetMapping("/test/spring-ai")
+    public ResponseEntity<Map<String, Object>> testSpringAI() {
+        Map<String, Object> result = new LinkedHashMap<>();
+        
+        try {
+            // 极简测试：只发送 hello
+            String response = analysisService.testSimpleCall("hello");
+            result.put("success", true);
+            result.put("response", response);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("error", e.getMessage());
+            result.put("errorType", e.getClass().getName());
+            if (e.getCause() != null) {
+                result.put("cause", e.getCause().getMessage());
+                result.put("causeType", e.getCause().getClass().getName());
+            }
+        }
+        
+        return ResponseEntity.ok(result);
+    }
 }

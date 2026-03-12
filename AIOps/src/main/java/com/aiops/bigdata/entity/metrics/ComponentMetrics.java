@@ -3,6 +3,7 @@ package com.aiops.bigdata.entity.metrics;
 import com.aiops.bigdata.entity.base.Metrics;
 import com.aiops.bigdata.entity.common.enums.ComponentType;
 import com.aiops.bigdata.entity.common.enums.ServiceType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,6 +19,7 @@ import java.util.Map;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComponentMetrics extends Metrics {
     
     /**

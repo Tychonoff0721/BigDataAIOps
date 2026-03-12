@@ -58,13 +58,25 @@ spring:
   
   # Spring AI 配置
   ai:
+    # OpenAI 配置
     openai:
-      api-key: ${OPENAI_API_KEY:sk-mock}
-      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      api-key: d00b0951-5243-4da0-86ad-9c7dc21bc681
+      # 火山引擎方舟 OpenAI 兼容 API
+      base-url: https://ark.cn-beijing.volces.com/api/coding
       chat:
         options:
-          model: ${OPENAI_MODEL:gpt-4o-mini}
+          model: doubao-seed-2.0-lite
           temperature: 0.7
+          timeoutSeconds: 120
+    
+    # Anthropic (Claude) 配置 - 有bug，暂时禁用
+    # anthropic:
+    #   api-key: your-api-key
+    #   base-url: https://api.anthropic.com
+    #   chat:
+    #     options:
+    #       model: claude-3-5-sonnet-20241022
+    #       temperature: 0.7
 
 # 服务配置
 server:
@@ -76,6 +88,9 @@ logging:
     root: INFO
     com.aiops.bigdata: DEBUG
     org.springframework.web: INFO
+    org.springframework.ai: DEBUG
+    org.springframework.http: DEBUG
+    org.springframework.web.client: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
@@ -92,6 +107,6 @@ aiops:
   # LLM配置
   llm:
     # 是否使用 Mock 模式（当真实 LLM 不可用时）
-    use-mock: true
+    use-mock: false
     # Mock 模式延迟（毫秒）
     mock-delay-ms: 500

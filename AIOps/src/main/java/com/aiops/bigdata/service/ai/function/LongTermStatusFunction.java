@@ -3,6 +3,7 @@ package com.aiops.bigdata.service.ai.function;
 import com.aiops.bigdata.service.context.LongTermStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
@@ -12,6 +13,7 @@ import java.util.function.Function;
  */
 @Slf4j
 @Component("getLongTermStatus")
+@Description("获取集群的长期运行状态，包括节点资源、HDFS状态、YARN状态、Spark作业统计等。参数: cluster(集群名称，必填)")
 @RequiredArgsConstructor
 public class LongTermStatusFunction 
         implements Function<LongTermStatusFunction.Request, LongTermStatusFunction.Response> {

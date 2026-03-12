@@ -4,6 +4,7 @@ import com.aiops.bigdata.entity.context.RealtimeMetrics;
 import com.aiops.bigdata.service.context.RealtimeMetricsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.function.Function;
  */
 @Slf4j
 @Component("getRealtimeMetrics")
+@Description("获取集群组件的实时监控指标，包括CPU、内存、GC时间等。参数: cluster(集群名称，必填), service(服务类型，可选), component(组件类型，可选)")
 @RequiredArgsConstructor
 public class RealtimeMetricsFunction 
         implements Function<RealtimeMetricsFunction.Request, RealtimeMetricsFunction.Response> {
