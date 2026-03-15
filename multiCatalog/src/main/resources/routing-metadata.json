@@ -1,0 +1,8 @@
+{
+  "defaultCluster": "hiveA",
+  "databases": {
+    "test": "hiveA",
+    "xyz": "hiveA",
+    "ops": "hiveB"
+  }
+}
